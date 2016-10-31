@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>A-Frame Beispiel</title>
+
+  <!-- Einbinden der A-FRAME Bibliothek (0.3.0) -->
+  <script src="https://aframe.io/releases/0.3.0/aframe.min.js"></script>
+
+  <script>
+    // Registrieren der neuen Komponente 'sky-on-click' beim
+    // Framework, sodass wir sie später verwenden können
+    AFRAME.registerComponent('sky-on-click', {
+      init: function () {
+        this.el.addEventListener('click', function () {
+          // Wir holen uns die URL des Bildes
+          var src = this.getAttribute('src');
+
+          // ...und geben diese an die Skybox weiter
+          document.getElementById('skybox').setAttribute('src', src);
+        });
+      }
+    });
+  </script>
+</head>
+<body>
+  <a-scene>
+    <!-- A-FRAME läd alle Assets und Mixins automatisch vor -->
+    <a-assets>
+      <a-mixin id="photosphere" sky-on-click radius="1"></a-mixin>
+      <a-mixin id="anim-rotation" attribute="rotation" dur="10000" easing="linear" to="0 360 0" repeat="indefinite"></a-mixin>
+      <a-mixin id="anim-hover" attribute="scale" begin="mouseenter" end="mouseleave" dur="300" to="1.1 1.1 1.1" direction="alternate-reverse" repeat="indefinite"></a-mixin>
+    </a-assets>
+
+    <!-- Die erste Fotokugel -->
+    <a-sphere mixin="photosphere" position="-2 0 -5" src="https://raw.githubusercontent.com/aframevr/aframe/master/examples/boilerplate/panorama/puydesancy.jpg">
+      <!-- Die Animationen haben wir in a-assets definiert und verwenden sie hier weiter -->
+      <a-animation mixin="anim-rotation"></a-animation>
+      <a-animation mixin="anim-hover"></a-animation>
+    </a-sphere>
+
+    <!-- Und die zweite Fotokugel -->
+    <a-sphere mixin="photosphere" position="2 0 -5" src="https://raw.githubusercontent.com/aframevr/aframe/master/examples/showcase/composite/lake.jpg">
+      <a-animation mixin="anim-rotation"></a-animation>
+      <a-animation mixin="anim-hover"></a-animation>
+    </a-sphere>
+    
+    <!-- Hier definieren wir die Kamera -->
+    <a-entity camera look-controls>
+      <!-- Und einen Ring, der als Cursor fungiert -->
+      <a-entity cursor="fuse: false"
+              position="0 0 -1"
+              geometry="primitive: ring; radiusInner: 0.05; radiusOuter: .07"
+              material="color: cyan; shader: flat">
+          <!-- Wenn wir den Cursor über eine Fotokugel bewegen oder eine Fotokugel verlassen, dann wird der Cursor entsprechend animiert -->
+          <a-animation attribute="scale" begin="mouseenter" to="1.25 1.25 1.25" dur="200"></a-animation>
+          <a-animation attribute="scale" begin="mouseleave" to="1 1 1" dur="200"></a-animation>
+      </a-entity>
+    </a-entity>
+    
+    <!-- Unsere Skybox, also der Himmel, die Anfangs noch leer ist -->
+    <a-sky id="skybox"></a-sky>
+  </a-scene>
+</body>
+</html>
